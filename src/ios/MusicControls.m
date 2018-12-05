@@ -55,7 +55,7 @@ MusicControlsInfo * musicControlsSettings;
     NSDictionary * musicControlsInfoDict = [command.arguments objectAtIndex:0];
     MusicControlsInfo * musicControlsInfo = [[MusicControlsInfo alloc] initWithDictionary:musicControlsInfoDict];
     NSNumber * elapsed = [NSNumber numberWithDouble:[musicControlsInfo elapsed]];
-    NSNumber * playbackRate = [NSNumber numberWithBool:[musicControlsInfo isPlaying]];
+    NSNumber * playbackRate = [NSNumber numberWithDouble:[musicControlsInfo isPlaying]];
     
     if (!NSClassFromString(@"MPNowPlayingInfoCenter")) {
         return;
@@ -67,6 +67,12 @@ MusicControlsInfo * musicControlsSettings;
     [updatedNowPlayingInfo setObject:elapsed forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
     [updatedNowPlayingInfo setObject:playbackRate forKey:MPNowPlayingInfoPropertyPlaybackRate];
     nowPlayingCenter.nowPlayingInfo = updatedNowPlayingInfo;
+
+    if (playbackRate == [NSNumber numberWithInt:1]) {
+        [[AVAudioSession sharedInstance] setActive:YES error:NULL];
+    } else {
+        [[AVAudioSession sharedInstance] setActive:NO error:NULL];
+    }
 }
 
 // this was performing the full function of updateIsPlaying and just adding elapsed time update as well
